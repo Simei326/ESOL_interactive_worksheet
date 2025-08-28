@@ -1,0 +1,149 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Entry 1 Food Listening Quiz</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    .question-card { border: 1px solid #ccc; padding: 20px; border-radius: 10px; max-width: 600px; margin: auto; }
+    .question { font-size: 1.2em; margin-bottom: 10px; }
+    .option-button { display: inline-block; margin: 10px; text-align: center; cursor: pointer; }
+    .option-button img { width: 80px; height: 80px; display: block; margin: auto; }
+    .result { margin-top: 20px; }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <h2>Entry 1 Food Listening Quiz</h2>
+  <div id="name-section">
+    <label>Enter your name:</label><br />
+    <input type="text" id="student-name" />
+    <button onclick="startQuiz()">Start</button>
+  </div>
+
+  <div id="quiz-section" class="hidden">
+    <div class="question-card">
+      <div id="question-number"></div>
+      <div class="question" id="question-text"></div>
+      <div id="options-container"></div>
+    </div>
+  </div>
+
+  <div id="result-section" class="hidden">
+    <h3 id="result-message"></h3>
+    <div id="answer-details"></div>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        question: "What is the person making?",
+        options: [
+          { text: "Salad", image: "https://upload.wikimedia.org/wikipedia/commons/2/25/Cobb_salad_2.jpg" },
+          { text: "Sandwich", image: "https://upload.wikimedia.org/wikipedia/commons/4/45/Club_sandwich.png" },
+          { text: "Soup", image: "https://upload.wikimedia.org/wikipedia/commons/4/4b/Tomato_soup_in_white_bowl.jpg" }
+        ],
+        answer: "Sandwich"
+      },
+      {
+        question: "What bread does he use?",
+        options: [
+          { text: "Brown bread", image: "https://upload.wikimedia.org/wikipedia/commons/6/6f/Brown_bread.jpg" },
+          { text: "Pitta bread", image: "https://upload.wikimedia.org/wikipedia/commons/3/3b/Pita_bread.jpg" },
+          { text: "White bread", image: "https://upload.wikimedia.org/wikipedia/commons/f/f0/White-Bread.jpg" }
+        ],
+        answer: "Pitta bread"
+      },
+      {
+        question: "Does the bread have sugar?",
+        options: [
+          { text: "Yes", image: "https://upload.wikimedia.org/wikipedia/commons/c/cb/Icon_Yes.svg" },
+          { text: "No", image: "https://upload.wikimedia.org/wikipedia/commons/2/2b/Icon_No.svg" }
+        ],
+        answer: "No"
+      },
+      {
+        question: "What food goes inside the bread?",
+        options: [
+          { text: "Cheese", image: "https://upload.wikimedia.org/wikipedia/commons/4/48/Cheese.jpg" },
+          { text: "Fish", image: "https://upload.wikimedia.org/wikipedia/commons/2/2e/Fish_Salmon.jpg" },
+          { text: "Chicken", image: "https://upload.wikimedia.org/wikipedia/commons/4/4f/Chicken_dish.jpg" }
+        ],
+        answer: "Cheese"
+      },
+      {
+        question: "Is the cheese hot or cold?",
+        options: [
+          { text: "Hot", image: "https://upload.wikimedia.org/wikipedia/commons/f/f6/Hot_icon.png" },
+          { text: "Cold", image: "https://upload.wikimedia.org/wikipedia/commons/2/2b/Snowflake_icon.svg" }
+        ],
+        answer: "Hot"
+      },
+      {
+        question: "Does the speaker want to eat a salad later?",
+        options: [
+          { text: "Yes", image: "https://upload.wikimedia.org/wikipedia/commons/c/cb/Icon_Yes.svg" },
+          { text: "No", image: "https://upload.wikimedia.org/wikipedia/commons/2/2b/Icon_No.svg" }
+        ],
+        answer: "Yes"
+      }
+    ];
+
+    let currentQuestion = 0;
+    let answers = [];
+    let studentName = "";
+
+    function startQuiz() {
+      studentName = document.getElementById('student-name').value;
+      if (!studentName) return alert("Please enter your name");
+      document.getElementById('name-section').classList.add('hidden');
+      document.getElementById('quiz-section').classList.remove('hidden');
+      showQuestion();
+    }
+
+    function showQuestion() {
+      const q = questions[currentQuestion];
+      document.getElementById('question-number').innerText = `Question ${currentQuestion + 1}`;
+      document.getElementById('question-text').innerText = q.question;
+      const container = document.getElementById('options-container');
+      container.innerHTML = '';
+      q.options.forEach(opt => {
+        const btn = document.createElement('div');
+        btn.className = 'option-button';
+        btn.innerHTML = `<img src="${opt.image}" alt="${opt.text}" /><div>${opt.text}</div>`;
+        btn.onclick = () => selectAnswer(opt.text);
+        container.appendChild(btn);
+      });
+    }
+
+    function selectAnswer(selected) {
+      const q = questions[currentQuestion];
+      answers.push({
+        question: q.question,
+        selected,
+        correct: selected === q.answer
+      });
+      currentQuestion++;
+      if (currentQuestion < questions.length) {
+        showQuestion();
+      } else {
+        showResult();
+      }
+    }
+
+    function showResult() {
+      document.getElementById('quiz-section').classList.add('hidden');
+      document.getElementById('result-section').classList.remove('hidden');
+      const score = answers.filter(a => a.correct).length;
+      document.getElementById('result-message').innerText = `${studentName}, you scored ${score} out of ${questions.length}`;
+      const detail = document.getElementById('answer-details');
+      detail.innerHTML = '';
+      answers.forEach(a => {
+        detail.innerHTML += `<p><strong>${a.question}</strong><br/>Your answer: ${a.selected} ${a.correct ? '✅' : '❌'}</p>`;
+      });
+    }
+  </script>
+</body>
+</html>
